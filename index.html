@@ -1,0 +1,1799 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>256.day — Happy Programmer's Day</title>
+<meta name="description" content="September 13. Day 256. A tribute to the people who write the world, one line at a time.">
+<meta name="theme-color" content="#050508">
+<meta property="og:title" content="256.day — Happy Programmer's Day">
+<meta property="og:description" content="September 13. Day 256. A cinematic tribute to the people who write the world. #256Day">
+<meta property="og:type" content="website">
+<meta property="og:image" content="poster-sample.png">
+<meta name="author" content="Erfan">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>&lt;/&gt;</text></svg>">
+<script>document.documentElement.className = 'js';</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+/* ============================================================
+   256 — Programmer's Day
+   Scroll-driven cinematic experience
+   ============================================================ */
+:root{
+  --bg:#050508;
+  --ink:#f5f5f7;
+  --ink-2:#a1a1ad;
+  --ink-3:#6e6e7a;
+  --blue:#0a84ff;
+  --cyan:#64d2ff;
+  --purple:#bf5af2;
+  --pink:#ff375f;
+  --green:#30d158;
+  --amber:#ffd60a;
+  --line:rgba(255,255,255,.085);
+  --glass:rgba(255,255,255,.035);
+  --sans:'Space Grotesk',-apple-system,BlinkMacSystemFont,'SF Pro Display','Inter',system-ui,sans-serif;
+  --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --e:cubic-bezier(.16,1,.3,1);
+  --pad:clamp(20px,5vw,64px);
+}
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%}
+body{
+  background:var(--bg);color:var(--ink);
+  font-family:var(--sans);font-weight:400;
+  line-height:1.6;overflow-x:hidden;
+  -webkit-font-smoothing:antialiased;-moz-osx-font-smoothing:grayscale;
+  text-rendering:optimizeLegibility;
+}
+::selection{background:rgba(10,132,255,.35);color:#fff}
+img,canvas{display:block;max-width:100%}
+a{color:inherit}
+
+::-webkit-scrollbar{width:9px}
+::-webkit-scrollbar-track{background:#08080d}
+::-webkit-scrollbar-thumb{background:linear-gradient(180deg,var(--blue),var(--purple));border-radius:9px}
+
+/* ---------- ambient background layers ---------- */
+#fx{position:fixed;inset:0;z-index:-3;pointer-events:none;
+  background:
+    radial-gradient(1200px 800px at 82% -12%, rgba(10,132,255,.15), transparent 58%),
+    radial-gradient(1000px 700px at 4% 106%, rgba(191,90,242,.13), transparent 58%),
+    radial-gradient(900px 620px at 50% 46%, rgba(255,55,95,.045), transparent 62%)}
+#stars{position:fixed;inset:0;z-index:-2;pointer-events:none}
+#spotlight{position:fixed;inset:0;z-index:-1;pointer-events:none;opacity:0;transition:opacity .8s ease;
+  background:radial-gradient(600px 600px at var(--mx,50%) var(--my,50%),
+    rgba(10,132,255,.085) 0%, rgba(191,90,242,.05) 34%, transparent 70%)}
+#spotlight.on{opacity:1}
+#grain{position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.28;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='140' height='140'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='140' height='140' filter='url(%23n)' opacity='.42'/%3E%3C/svg%3E")}
+#confetti{position:fixed;inset:0;z-index:900;pointer-events:none}
+
+/* ---------- scroll progress ---------- */
+#progress{position:fixed;top:0;left:0;height:2px;width:0;z-index:400;
+  background:linear-gradient(90deg,var(--cyan),var(--blue),var(--purple),var(--pink));
+  box-shadow:0 0 14px rgba(10,132,255,.7)}
+
+/* ---------- nav ---------- */
+.nav{position:fixed;top:0;left:0;right:0;z-index:300;display:flex;align-items:center;
+  justify-content:space-between;gap:16px;padding:18px var(--pad);
+  transition:padding .5s var(--e),background .5s,border-color .5s;
+  border-bottom:1px solid transparent}
+.nav.stuck{padding:11px var(--pad);background:rgba(5,5,10,.68);
+  backdrop-filter:blur(26px) saturate(180%);-webkit-backdrop-filter:blur(26px) saturate(180%);
+  border-bottom-color:var(--line)}
+.brand{display:flex;align-items:center;gap:11px;text-decoration:none;font-weight:600;letter-spacing:-.02em;font-size:1rem}
+.brand-mark{display:grid;place-items:center;width:34px;height:34px;border-radius:10px;
+  font-family:var(--mono);font-size:.74rem;font-weight:700;color:var(--cyan);
+  background:linear-gradient(135deg,rgba(10,132,255,.22),rgba(191,90,242,.22));
+  border:1px solid rgba(100,210,255,.32);transition:transform .5s var(--e)}
+.brand:hover .brand-mark{transform:rotate(-8deg) scale(1.07)}
+.nav-links{display:flex;gap:28px;list-style:none}
+.nav-links a{position:relative;text-decoration:none;color:var(--ink-2);font-size:.86rem;
+  font-weight:500;letter-spacing:.01em;transition:color .35s}
+.nav-links a::after{content:'';position:absolute;left:0;right:0;bottom:-6px;height:1px;
+  background:linear-gradient(90deg,var(--cyan),var(--purple));transform:scaleX(0);
+  transform-origin:left;transition:transform .45s var(--e)}
+.nav-links a:hover{color:var(--ink)}
+.nav-links a:hover::after{transform:scaleX(1)}
+.nav-right{display:flex;align-items:center;gap:12px}
+.gh-chip{display:flex;align-items:center;gap:8px;padding:8px 16px;border-radius:100px;
+  text-decoration:none;font-size:.84rem;font-weight:500;color:var(--ink);
+  background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);
+  transition:border-color .4s,transform .4s var(--e),background .4s}
+.gh-chip:hover{border-color:rgba(255,255,255,.28);transform:translateY(-2px);background:rgba(255,255,255,.07)}
+.gh-chip svg{width:16px;height:16px;fill:currentColor}
+.btn-solid{padding:9px 20px;border-radius:100px;font-size:.85rem;font-weight:600;text-decoration:none;
+  color:#fff;background:linear-gradient(135deg,var(--blue),var(--purple));border:none;cursor:pointer;
+  font-family:inherit;box-shadow:0 4px 22px rgba(10,132,255,.35);
+  transition:transform .4s var(--e),box-shadow .4s}
+.btn-solid:hover{transform:translateY(-2px);box-shadow:0 8px 30px rgba(191,90,242,.45)}
+@media(max-width:900px){.nav-links{display:none}}
+@media(max-width:520px){.gh-chip span{display:none}}
+
+/* ---------- scroll-driven primitives ----------
+   Elements stay fully visible until JS opts in by adding .js to <html>.
+   If the observer ever misses an element, nothing is left invisible. */
+.js [data-anim]{opacity:0;transform:translateY(var(--ty,44px)) scale(var(--sc,1));
+  filter:blur(var(--bl,7px));
+  transition:opacity 1s var(--e),transform 1.15s var(--e),filter 1s var(--e);
+  transition-delay:var(--d,0ms)}
+.js [data-anim].in{opacity:1;filter:blur(0);
+  transform:perspective(1000px) rotateX(var(--rx,0deg)) rotateY(var(--ry,0deg)) translateY(var(--lift,0px)) scale(1)}
+
+.stage{position:relative;min-height:100svh;display:flex;align-items:center;justify-content:center;
+  padding:clamp(96px,14vh,150px) var(--pad);overflow:clip}
+.stage--tall{min-height:120svh}
+.wrap{width:100%;max-width:1180px;margin-inline:auto;position:relative;z-index:2}
+.wrap--narrow{max-width:860px}
+.center{text-align:center}
+
+.eyebrow{display:inline-flex;align-items:center;gap:10px;padding:7px 17px;border-radius:100px;
+  background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  font-family:var(--mono);font-size:.72rem;font-weight:500;letter-spacing:.14em;
+  text-transform:uppercase;color:var(--ink-2);margin-bottom:clamp(22px,4vh,36px)}
+.eyebrow .pip{width:6px;height:6px;border-radius:50%;background:var(--green);
+  box-shadow:0 0 10px var(--green);animation:pip 2.2s ease-in-out infinite}
+@keyframes pip{0%,100%{opacity:1}50%{opacity:.3}}
+
+h1,h2,h3{font-weight:600;letter-spacing:-.045em;line-height:1.02}
+h1{font-size:clamp(3.4rem,13vw,10.5rem);line-height:.92;letter-spacing:-.06em}
+h2{font-size:clamp(2.1rem,6.4vw,4.6rem);line-height:1.03}
+h3{font-size:1.05rem;letter-spacing:-.02em;line-height:1.35}
+
+.grad{background:linear-gradient(115deg,var(--cyan),var(--blue) 28%,var(--purple) 56%,var(--pink) 80%,var(--cyan));
+  background-size:280% auto;-webkit-background-clip:text;background-clip:text;color:transparent;
+  animation:flow 9s linear infinite}
+@keyframes flow{to{background-position:280% center}}
+
+.lede{font-size:clamp(1rem,2.3vw,1.28rem);font-weight:300;color:var(--ink-2);
+  max-width:620px;line-height:1.75;letter-spacing:-.01em}
+.center .lede{margin-inline:auto}
+.mono-note{font-family:var(--mono);font-size:.78rem;color:var(--ink-3);letter-spacing:.04em}
+
+/* ---------- hero ---------- */
+#hero{min-height:100svh;position:relative}
+.orb{position:absolute;border-radius:50%;filter:blur(96px);opacity:.55;z-index:0;pointer-events:none}
+.orb--a{width:min(46vw,460px);aspect-ratio:1;background:rgba(10,132,255,.34);top:6%;right:-6%}
+.orb--b{width:min(42vw,420px);aspect-ratio:1;background:rgba(191,90,242,.3);bottom:2%;left:-8%}
+.hero-date{font-family:var(--mono);font-size:clamp(.72rem,1.6vw,.86rem);color:var(--cyan);
+  letter-spacing:.24em;text-transform:uppercase;margin-bottom:clamp(18px,3.4vh,30px)}
+.hero-sub{margin-top:clamp(20px,3.4vh,32px)}
+.hero-line{display:block}
+.hero-line>span{display:block;padding-bottom:.08em;margin-bottom:-.08em}
+
+/* countdown */
+.clock{margin-top:clamp(40px,7vh,72px);display:flex;justify-content:center;gap:clamp(8px,1.6vw,16px);flex-wrap:wrap}
+.cell{min-width:clamp(78px,15vw,124px);padding:clamp(14px,2.4vw,24px) 12px;border-radius:22px;
+  background:var(--glass);border:1px solid var(--line);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  transition:transform .55s var(--e),border-color .55s,background .55s}
+.cell:hover{transform:translateY(-8px);border-color:rgba(100,210,255,.45);background:rgba(100,210,255,.06)}
+.cell b{display:block;font-size:clamp(1.9rem,5.4vw,3.4rem);font-weight:600;line-height:1;
+  letter-spacing:-.05em;font-variant-numeric:tabular-nums;
+  background:linear-gradient(180deg,#fff,#93a6bd);-webkit-background-clip:text;background-clip:text;color:transparent}
+.cell i{display:block;font-style:normal;font-family:var(--mono);font-size:.66rem;letter-spacing:.18em;
+  text-transform:uppercase;color:var(--ink-3);margin-top:10px}
+.clock-msg{font-size:clamp(1.4rem,4.4vw,2.4rem);font-weight:600;letter-spacing:-.04em}
+
+.cue{position:absolute;left:50%;bottom:clamp(22px,4vh,40px);transform:translateX(-50%);z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:9px;
+  font-family:var(--mono);font-size:.66rem;letter-spacing:.2em;text-transform:uppercase;color:var(--ink-3)}
+.cue i{width:22px;height:36px;border:1.5px solid rgba(255,255,255,.22);border-radius:13px;position:relative}
+.cue i::after{content:'';position:absolute;left:50%;top:6px;width:3px;height:7px;border-radius:3px;
+  background:var(--cyan);transform:translateX(-50%);animation:cue 1.9s ease-in-out infinite}
+@keyframes cue{0%{opacity:1;top:6px}70%{opacity:0;top:19px}100%{opacity:0;top:6px}}
+
+/* ---------- chapter rail ---------- */
+.rail{position:fixed;left:clamp(12px,2vw,26px);top:50%;transform:translateY(-50%);z-index:250;
+  display:flex;flex-direction:column;gap:16px}
+.rail a{position:relative;width:22px;height:22px;display:grid;place-items:center}
+.rail a span{width:5px;height:5px;border-radius:50%;background:rgba(255,255,255,.24);
+  transition:all .5s var(--e)}
+.rail a.on span{background:var(--cyan);box-shadow:0 0 12px var(--cyan);transform:scale(1.5)}
+.rail a em{position:absolute;left:26px;white-space:nowrap;font-style:normal;font-family:var(--mono);
+  font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-2);
+  opacity:0;transform:translateX(-6px);transition:all .4s var(--e);pointer-events:none}
+.rail a:hover em{opacity:1;transform:none}
+@media(max-width:1180px){.rail{display:none}}
+
+/* ---------- pinned 256 ---------- */
+.pin-outer{height:300vh;position:relative}
+.pin{position:sticky;top:0;height:100svh;display:flex;flex-direction:column;align-items:center;
+  justify-content:center;gap:clamp(18px,5vh,54px);overflow:hidden;padding-inline:var(--pad)}
+@media (max-height:760px){.n256{font-size:clamp(5rem,24vh,13rem)}}
+.n256{font-size:clamp(7rem,30vw,22rem);font-weight:700;letter-spacing:-.07em;line-height:.85;
+  transform:scale(var(--s,.7));will-change:transform;
+  filter:drop-shadow(0 0 80px rgba(10,132,255,.4))}
+.n256-sub{font-family:var(--mono);font-size:clamp(.78rem,2vw,1rem);color:var(--cyan);
+  letter-spacing:.3em;margin-top:clamp(14px,3vh,26px);opacity:var(--o,1)}
+.pin-copy{width:min(720px,100%);text-align:center;padding-inline:var(--pad)}
+
+/* ---------- cards ---------- */
+.grid{display:grid;gap:clamp(14px,2vw,22px);margin-top:clamp(38px,7vh,68px)}
+.grid--3{grid-template-columns:repeat(auto-fit,minmax(250px,1fr))}
+.grid--4{grid-template-columns:repeat(auto-fit,minmax(200px,1fr))}
+.grid--2{grid-template-columns:repeat(auto-fit,minmax(280px,1fr))}
+.card{background:var(--glass);border:1px solid var(--line);border-radius:26px;
+  padding:clamp(26px,3.4vw,38px) clamp(22px,3vw,32px);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  transition:transform .6s var(--e),border-color .6s,background .6s,box-shadow .6s}
+.card:hover{--lift:-9px;border-color:rgba(100,210,255,.4);
+  background:rgba(100,210,255,.045);box-shadow:0 26px 70px rgba(0,0,0,.45)}
+.card .glyph{font-size:1.7rem;margin-bottom:16px;display:block;line-height:1;
+  transition:transform .5s var(--e)}
+.card:hover .glyph{transform:scale(1.18) rotate(-8deg)}
+.card p{color:var(--ink-2);font-size:.94rem;font-weight:300;margin-top:10px;line-height:1.7}
+
+/* ---------- terminal ---------- */
+.term{margin-top:clamp(34px,6vh,60px);border-radius:24px;overflow:hidden;border:1px solid var(--line);
+  background:rgba(11,14,20,.9);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  box-shadow:0 40px 110px rgba(0,0,0,.6);text-align:left}
+.term-bar{display:flex;align-items:center;gap:8px;padding:13px 18px;
+  background:rgba(255,255,255,.04);border-bottom:1px solid rgba(255,255,255,.07)}
+.dots{display:flex;gap:7px}
+.dots i{width:11px;height:11px;border-radius:50%}
+.dots i:nth-child(1){background:#ff5f57}.dots i:nth-child(2){background:#febc2e}.dots i:nth-child(3){background:#28c840}
+.term-bar b{margin:0 auto;font-family:var(--mono);font-size:.72rem;font-weight:400;color:#8b949e;letter-spacing:.04em}
+.term-body{padding:clamp(20px,3vw,32px) clamp(16px,2.6vw,28px);min-height:min(52vh,380px);
+  font-family:var(--mono);font-size:clamp(.76rem,1.55vw,.95rem);line-height:2.05;overflow-x:auto}
+.term-body pre{margin:0;font:inherit;white-space:pre}
+.ln{color:#e6edf3}.ln.c{color:#7ee787}.ln.k{color:#ff7b72}.ln.f{color:#79c0ff}
+.ln.s{color:#a5d6ff;opacity:.85}.ln.n{color:#d2a8ff}
+.caret{display:inline-block;width:8px;height:1.1em;background:#79c0ff;border-radius:2px;
+  vertical-align:text-bottom;animation:caret 1.05s steps(2,start) infinite}
+@keyframes caret{to{visibility:hidden}}
+
+/* ---------- marquee ---------- */
+.marquee{overflow:hidden;padding:clamp(26px,4vh,40px) 0;border-block:1px solid var(--line);
+  background:rgba(255,255,255,.014);position:relative;z-index:2}
+.marquee::before,.marquee::after{content:'';position:absolute;top:0;bottom:0;width:14vw;z-index:2;pointer-events:none}
+.marquee::before{left:0;background:linear-gradient(90deg,var(--bg),transparent)}
+.marquee::after{right:0;background:linear-gradient(270deg,var(--bg),transparent)}
+.track{display:flex;width:max-content;animation:slide var(--dur,38s) linear infinite}
+.marquee:hover .track{animation-play-state:paused}
+.track>span{display:flex;align-items:center;gap:clamp(28px,4vw,54px);padding-right:clamp(28px,4vw,54px);
+  font-family:var(--mono);font-size:clamp(.86rem,1.7vw,1.06rem);color:var(--ink-3);white-space:nowrap;
+  font-weight:400;letter-spacing:.02em}
+.track>span b{font-weight:400;transition:color .35s}
+.track>span b::after{content:'✦';margin-left:clamp(28px,4vw,54px);font-size:.55rem;color:var(--purple);vertical-align:middle}
+@keyframes slide{to{transform:translateX(-50%)}}
+
+/* ---------- stat ---------- */
+.stat{text-align:center;padding:clamp(34px,5vw,52px) 18px}
+.stat b{display:block;font-size:clamp(2.6rem,7vw,4.2rem);font-weight:600;letter-spacing:-.05em;
+  line-height:1.1;font-variant-numeric:tabular-nums;
+  background:linear-gradient(120deg,var(--cyan),var(--purple));-webkit-background-clip:text;
+  background-clip:text;color:transparent}
+.stat i{display:block;font-style:normal;color:var(--ink-2);font-size:.9rem;font-weight:300;margin-top:12px}
+
+/* ---------- quote ---------- */
+.quote{position:relative;overflow:hidden}
+.quote::before{content:'\201D';position:absolute;top:-24px;right:18px;font-size:8rem;font-weight:700;
+  line-height:1;background:linear-gradient(135deg,var(--blue),var(--purple));
+  -webkit-background-clip:text;background-clip:text;color:transparent;opacity:.75}
+.quote p{font-size:clamp(1rem,2.1vw,1.12rem);font-weight:400;line-height:1.75;
+  letter-spacing:-.015em;position:relative;z-index:1}
+.quote .who{margin-top:22px;font-family:var(--mono);font-size:.76rem;color:var(--ink-3);letter-spacing:.05em}
+.quote .who b{color:var(--cyan);font-weight:500}
+
+/* ---------- dev truths ---------- */
+.truth .tag{display:block;font-family:var(--mono);font-size:.7rem;color:var(--purple);
+  letter-spacing:.08em;margin-bottom:14px}
+.truth p{margin-top:0;font-size:.98rem}
+
+/* ---------- custom cursor ---------- */
+html.has-cursor, html.has-cursor a, html.has-cursor button, html.has-cursor .sw,
+html.has-cursor label{cursor:none}
+html.has-cursor input{cursor:text}
+.cursor-dot,.cursor-ring{position:fixed;left:0;top:0;z-index:997;pointer-events:none;border-radius:50%;will-change:transform}
+.cursor-dot{width:6px;height:6px;background:var(--cyan);box-shadow:0 0 14px var(--cyan)}
+.cursor-ring{width:36px;height:36px;border:1px solid rgba(100,210,255,.45);
+  transition:width .35s var(--e),height .35s var(--e),border-color .35s}
+body.cursor-hover .cursor-ring{width:60px;height:60px;border-color:rgba(191,90,242,.8)}
+@media (prefers-reduced-motion:reduce){.cursor-dot,.cursor-ring{display:none}}
+
+/* ---------- poster studio ---------- */
+.studio{display:grid;grid-template-columns:minmax(0,1.05fr) minmax(0,.95fr);gap:clamp(24px,4vw,52px);
+  align-items:center;margin-top:clamp(40px,7vh,72px)}
+@media(max-width:940px){.studio{grid-template-columns:1fr}}
+.poster-frame{position:relative;padding:clamp(10px,2vw,20px);border-radius:32px;
+  background:linear-gradient(150deg,rgba(100,210,255,.16),rgba(191,90,242,.14) 50%,rgba(255,55,95,.1));
+  transition:transform .7s var(--e)}
+.poster-frame::after{content:'';position:absolute;inset:0;border-radius:32px;pointer-events:none;
+  box-shadow:0 40px 120px rgba(10,132,255,.22)}
+.poster-frame:hover{transform:translateY(-8px) rotate(-.6deg)}
+#poster-canvas{width:100%;height:auto;border-radius:20px;box-shadow:0 30px 90px rgba(0,0,0,.6)}
+.studio-panel{background:var(--glass);border:1px solid var(--line);border-radius:26px;
+  padding:clamp(24px,3.4vw,36px);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px)}
+.field{margin-bottom:22px}
+.field label{display:block;font-family:var(--mono);font-size:.68rem;letter-spacing:.16em;
+  text-transform:uppercase;color:var(--ink-3);margin-bottom:10px}
+.field input{width:100%;padding:13px 16px;border-radius:14px;background:rgba(0,0,0,.35);
+  border:1px solid var(--line);color:var(--ink);font-family:var(--sans);font-size:.95rem;
+  outline:none;transition:border-color .35s,background .35s}
+.field input:focus{border-color:rgba(100,210,255,.55);background:rgba(0,0,0,.5)}
+.field input::placeholder{color:var(--ink-3)}
+.swatches{display:flex;gap:10px;flex-wrap:wrap}
+.sw{width:42px;height:42px;border-radius:13px;border:1.5px solid transparent;cursor:pointer;
+  padding:0;transition:transform .4s var(--e),border-color .4s}
+.sw:hover{transform:scale(1.1) translateY(-2px)}
+.sw[aria-pressed="true"]{border-color:#fff;transform:scale(1.08)}
+.actions{display:flex;gap:12px;flex-wrap:wrap;margin-top:26px}
+.btn{display:inline-flex;align-items:center;justify-content:center;gap:9px;padding:14px 26px;
+  border-radius:100px;font-family:inherit;font-size:.92rem;font-weight:600;cursor:pointer;
+  text-decoration:none;border:1px solid var(--line);background:var(--glass);color:var(--ink);
+  transition:transform .4s var(--e),background .4s,border-color .4s,box-shadow .4s}
+.btn:hover{transform:translateY(-3px);background:rgba(255,255,255,.08);border-color:rgba(255,255,255,.25)}
+.btn:disabled{opacity:.45;cursor:not-allowed;transform:none}
+.btn--go{border:none;color:#fff;background:linear-gradient(135deg,var(--blue),var(--purple));
+  box-shadow:0 8px 30px rgba(10,132,255,.35)}
+.btn--go:hover{box-shadow:0 14px 44px rgba(191,90,242,.5);background:linear-gradient(135deg,var(--blue),var(--purple))}
+.btn svg{width:17px;height:17px;fill:currentColor}
+.hint{margin-top:18px;font-size:.8rem;color:var(--ink-3);font-weight:300;line-height:1.65}
+
+/* ---------- creator ---------- */
+.creator{display:flex;align-items:center;gap:clamp(20px,3.4vw,36px);flex-wrap:wrap;
+  margin-top:clamp(36px,6vh,60px)}
+.avatar{position:relative;width:clamp(92px,14vw,132px);aspect-ratio:1;border-radius:50%;
+  padding:3px;background:linear-gradient(135deg,var(--cyan),var(--purple),var(--pink));flex:none}
+.avatar img{width:100%;height:100%;border-radius:50%;object-fit:cover;background:#0b0b12;
+  border:3px solid var(--bg)}
+.creator-meta b{display:block;font-size:clamp(1.4rem,3.4vw,2rem);font-weight:600;letter-spacing:-.035em}
+.creator-meta .handle{font-family:var(--mono);font-size:.86rem;color:var(--cyan);text-decoration:none;
+  letter-spacing:.02em}
+.creator-meta .handle:hover{text-decoration:underline}
+.creator-meta .handle--repo{display:inline-block;margin-top:10px;padding:7px 16px;border:1px solid var(--line);
+  border-radius:100px;background:var(--glass);color:var(--ink-1)}
+.creator-meta p{color:var(--ink-2);font-size:.95rem;font-weight:300;margin-top:8px;max-width:440px}
+
+/* ---------- footer ---------- */
+footer{position:relative;z-index:2;text-align:center;padding:clamp(64px,10vh,100px) var(--pad) 46px;
+  border-top:1px solid var(--line)}
+footer .big{font-size:clamp(2rem,9vw,5.4rem);font-weight:700;letter-spacing:-.06em;line-height:1}
+footer .sig{margin-top:26px;font-family:var(--mono);font-size:.76rem;color:var(--ink-3);letter-spacing:.1em}
+footer .sig a{color:var(--cyan);text-decoration:none}
+footer .sig a:hover{text-decoration:underline}
+footer .fine{margin-top:14px;font-size:.76rem;color:var(--ink-3);font-weight:300}
+footer .fine kbd{font-family:var(--mono);font-size:.72rem;padding:2px 7px;border-radius:6px;
+  background:rgba(255,255,255,.07);border:1px solid var(--line);color:var(--ink-2)}
+
+/* ---------- easter egg toast ---------- */
+#toast{position:fixed;bottom:26px;left:50%;transform:translate(-50%,28px);z-index:950;
+  padding:14px 26px;border-radius:100px;font-size:.94rem;font-weight:500;color:#fff;
+  background:rgba(10,12,20,.82);border:1px solid rgba(100,210,255,.4);
+  backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  box-shadow:0 14px 54px rgba(10,132,255,.35);opacity:0;pointer-events:none;
+  transition:opacity .5s var(--e),transform .5s var(--e);max-width:88vw;text-align:center}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+
+/* ---------- glitch (feels like a bug, resolves like a surprise) ---------- */
+h2.glitching{font-family:var(--mono)!important;font-size:clamp(.9rem,2.4vw,1.35rem)!important;
+  letter-spacing:0!important;color:var(--pink)!important;font-weight:500;
+  animation:glitch .62s steps(3,end) both}
+@keyframes glitch{
+  0%{transform:translate(0);text-shadow:2px 0 var(--pink),-2px 0 var(--cyan)}
+  15%{transform:translate(-5px,2px) skewX(-7deg);clip-path:inset(12% 0 55% 0);text-shadow:-3px 0 var(--cyan),3px 0 var(--pink)}
+  30%{transform:translate(5px,-2px) skewX(5deg);clip-path:inset(58% 0 10% 0)}
+  45%{transform:translate(-3px,1px);clip-path:inset(0 0 0 0);text-shadow:-3px 0 var(--pink),3px 0 var(--cyan)}
+  60%{transform:translate(3px,-1px) skewX(-3deg);clip-path:inset(28% 0 42% 0)}
+  80%{transform:translate(-1px,1px);clip-path:inset(0 0 0 0)}
+  100%{transform:none;text-shadow:none;clip-path:inset(0 0 0 0)}
+}
+
+/* ---------- forbidden module ---------- */
+.forb-grid{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:clamp(16px,2.4vw,26px);
+  margin-top:clamp(38px,7vh,64px);align-items:stretch}
+@media(max-width:940px){.forb-grid{grid-template-columns:1fr}}
+.forb-code .term-body{overflow-x:auto}
+.forb-out{background:var(--glass);border:1px solid var(--line);border-radius:24px;
+  padding:clamp(22px,3vw,32px);backdrop-filter:blur(22px);-webkit-backdrop-filter:blur(22px);
+  display:flex;flex-direction:column;gap:18px;text-align:left}
+.out-title{font-family:var(--mono);font-size:.78rem;color:var(--ink-3)}
+#forbidden-out{font-family:var(--mono);font-size:.82rem;line-height:2.05;min-height:170px;
+  color:#e6edf3;white-space:pre-wrap}
+#forbidden-out .warn{color:var(--amber)}
+#forbidden-out .ok{color:var(--green)}
+#forbidden-out .bad{color:var(--pink)}
+.tape{align-self:flex-start;padding:12px 22px;font-family:var(--mono);font-weight:700;
+  font-size:.82rem;letter-spacing:.14em;color:#111;transform:rotate(-2deg);
+  background:var(--amber);border:6px solid;border-radius:6px;
+  border-image:repeating-linear-gradient(-45deg,#151515 0 12px,var(--amber) 12px 24px) 6;
+  box-shadow:0 10px 34px rgba(255,214,10,.28)}
+.btn-danger{border:none;color:#fff;background:linear-gradient(135deg,#ff375f,#ff9f0a);
+  box-shadow:0 8px 30px rgba(255,55,95,.4);align-self:flex-start}
+.btn-danger:hover{box-shadow:0 14px 44px rgba(255,55,95,.55);background:linear-gradient(135deg,#ff375f,#ff9f0a)}
+
+/* page-wide freakout when the forbidden button is touched */
+html.freakout body{animation:freak .7s steps(2,end)}
+@keyframes freak{
+  0%{filter:none;transform:none}
+  18%{filter:hue-rotate(90deg) saturate(3);transform:translateX(-8px) skewX(-2deg)}
+  38%{filter:invert(.9);transform:translateX(8px)}
+  58%{filter:hue-rotate(-120deg) saturate(2);transform:translateY(5px) skewX(2deg)}
+  80%{filter:saturate(4) contrast(1.6);transform:translateY(-5px)}
+  100%{filter:none;transform:none}
+}
+
+/* ---------- reduced motion ---------- */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;
+    transition-duration:.01ms!important}
+  html{scroll-behavior:auto}
+  [data-anim]{opacity:1!important;transform:none!important;filter:none!important}
+  .n256{transform:none!important}
+  .pin-outer{height:auto}
+  .pin{position:relative;height:auto;padding-block:120px}
+}
+</style>
+</head>
+<body>
+<div id="fx"></div>
+<canvas id="stars"></canvas>
+<div id="spotlight"></div>
+<div id="grain"></div>
+<canvas id="confetti"></canvas>
+<div id="progress"></div>
+<div id="toast"></div>
+
+<nav class="nav" id="nav">
+  <a href="#hero" class="brand"><span class="brand-mark">&lt;/&gt;</span> 256</a>
+  <ul class="nav-links">
+    <li><a href="#why" data-i18n="nav.why">Why 256</a></li>
+    <li><a href="#code" data-i18n="nav.code">Code</a></li>
+    <li><a href="#scale" data-i18n="nav.scale">Scale</a></li>
+    <li><a href="#voices" data-i18n="nav.voices">Voices</a></li>
+    <li><a href="#poster" data-i18n="nav.poster">Poster</a></li>
+  </ul>
+  <div class="nav-right">
+    <a class="gh-chip" href="https://github.com/Erfan-8910" target="_blank" rel="noopener">
+      <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      <span>Erfan-8910</span>
+    </a>
+    <a class="btn-solid" href="#poster" data-i18n="nav.cta">Get the poster</a>
+  </div>
+</nav>
+
+<nav class="rail" id="rail" aria-label="Sections">
+  <a href="#hero"><span></span><em data-i18n="rail.1">Intro</em></a>
+  <a href="#why"><span></span><em data-i18n="rail.2">Why 256</em></a>
+  <a href="#code"><span></span><em data-i18n="rail.3">Code</em></a>
+  <a href="#scale"><span></span><em data-i18n="rail.4">Scale</em></a>
+  <a href="#voices"><span></span><em data-i18n="rail.5">Voices</em></a>
+  <a href="#forbidden"><span></span><em data-i18n="rail.6">Forbidden</em></a>
+  <a href="#poster"><span></span><em data-i18n="rail.7">Poster</em></a>
+  <a href="#creator"><span></span><em data-i18n="rail.8">Creator</em></a>
+</nav>
+
+<!-- ============ HERO ============ -->
+<section class="stage" id="hero">
+  <div class="orb orb--a" data-orb="26"></div>
+  <div class="orb orb--b" data-orb="-20"></div>
+    <div class="wrap center" id="hero-wrap">
+    <div class="hero-date" data-anim data-i18n="hero.date">September 13 &nbsp;·&nbsp; Day 256</div>
+    <h1>
+      <span class="hero-line" data-anim style="--d:120ms"><span data-i18n="hero.l1">Happy</span></span>
+      <span class="hero-line" data-anim style="--d:240ms"><span class="grad" data-i18n="hero.l2">Programmer's</span></span>
+      <span class="hero-line" data-anim style="--d:360ms"><span data-i18n="hero.l3">Day.</span></span>
+    </h1>
+    <p class="lede hero-sub" data-anim style="--d:520ms" data-i18n="hero.lede">
+      To everyone who ever shipped at 2 a.m., renamed a file <code style="font-family:var(--mono);font-size:.9em;color:var(--cyan)">final_final_v2</code>,
+      and counted from zero — the world runs on your curiosity. This one's for you.
+    </p>
+    <div data-anim style="--d:640ms">
+      <div class="clock" id="clock">
+        <div class="cell"><b id="c-d">--</b><i data-i18n="cd.d">Days</i></div>
+        <div class="cell"><b id="c-h">--</b><i data-i18n="cd.h">Hours</i></div>
+        <div class="cell"><b id="c-m">--</b><i data-i18n="cd.m">Minutes</i></div>
+        <div class="cell"><b id="c-s">--</b><i data-i18n="cd.s">Seconds</i></div>
+      </div>
+    </div>
+  </div>
+  <div class="cue" data-anim style="--d:900ms"><i></i><span data-i18n="cue">Scroll</span></div>
+</section>
+
+<!-- ============ WHY 256 (pinned) ============ -->
+<div class="pin-outer" id="why">
+  <div class="pin" id="pin">
+    <div class="center">
+      <div class="n256 grad" id="n256">256</div>
+      <div class="n256-sub" id="n256sub">2 ^ 8 = 256</div>
+    </div>
+    <div class="pin-copy">
+      <div class="eyebrow" data-anim><span class="pip"></span><span data-i18n="why.eyebrow">One byte</span></div>
+      <h2 data-anim data-i18n="why.h2">Why the 256th day?</h2>
+      <p class="lede" data-anim style="--d:140ms;margin-top:20px" data-i18n="why.lede">
+        256 is the largest number a single byte can hold — eight bits, 2<sup>8</sup>.
+        So the 256th day of the year belongs to us: September 13, or September 12 in a leap year.
+      </p>
+    </div>
+  </div>
+</div>
+
+<section class="stage" style="min-height:auto;padding-block:clamp(70px,11vh,120px)">
+  <div class="wrap">
+    <div class="grid grid--3">
+      <article class="card" data-anim><span class="glyph">💾</span><h3 data-i18n="why.c1t">One byte, one world</h3>
+        <p data-i18n="why.c1p">Every colour, character and instruction you have ever seen began as eight humble bits.</p></article>
+      <article class="card" data-anim style="--d:120ms"><span class="glyph">🗓️</span><h3 data-i18n="why.c2t">Official since 2009</h3>
+        <p data-i18n="why.c2p">Registered as a national holiday in Russia, now celebrated by engineers on every continent.</p></article>
+      <article class="card" data-anim style="--d:240ms"><span class="glyph">🌍</span><h3 data-i18n="why.c3t">For every stack</h3>
+        <p data-i18n="why.c3p">Frontend, backend, mobile, embedded, ML — if you ship it, today is yours.</p></article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CODE ============ -->
+<section class="stage" id="code" style="min-height:auto;padding-block:clamp(80px,13vh,140px)">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow" data-anim><span class="pip"></span><span data-i18n="code.eyebrow">Hello, World</span></div>
+      <h2 data-anim data-i18n="code.h2">A tribute, in our language.</h2>
+      <p class="lede" data-anim style="--d:140ms;margin-top:20px" data-i18n="code.lede">Because nothing says congrats quite like source code.</p>
+    </div>
+    <div class="term" data-anim style="--d:200ms">
+      <div class="term-bar">
+        <div class="dots"><i></i><i></i><i></i></div>
+        <b>tribute.ts — zsh</b>
+      </div>
+      <div class="term-body"><pre id="typed"></pre></div>
+    </div>
+  </div>
+</section>
+
+<div class="marquee" aria-hidden="true"><div class="track" id="track"></div></div>
+
+<!-- ============ SCALE ============ -->
+<section class="stage" id="scale" style="min-height:auto;padding-block:clamp(80px,13vh,140px)">
+  <div class="wrap center">
+    <div class="eyebrow" data-anim><span class="pip"></span><span data-i18n="scale.eyebrow">The scale</span></div>
+    <h2 data-anim data-i18n="scale.h2">The world we built.</h2>
+    <div class="grid grid--4">
+      <div class="card stat" data-anim><b data-count="100">0</b><i data-i18n="scale.s1">Million+ developers on GitHub</i></div>
+      <div class="card stat" data-anim style="--d:110ms"><b data-count="700">0</b><i data-i18n="scale.s2">Known programming languages</i></div>
+      <div class="card stat" data-anim style="--d:220ms"><b data-count="256">0</b><i data-i18n="scale.s3">Today’s magic number</i></div>
+      <div class="card stat" data-anim style="--d:330ms"><b>∞</b><i data-i18n="scale.s4">Cups of coffee consumed ☕</i></div>
+    </div>
+    <p class="mono-note" data-anim style="margin-top:34px" data-i18n="scale.note">Figures are approximate. The coffee count is not.</p>
+  </div>
+</section>
+
+<!-- ============ VOICES ============ -->
+<section class="stage" id="voices" style="min-height:auto;padding-block:clamp(80px,13vh,140px)">
+  <div class="wrap center">
+    <div class="eyebrow" data-anim><span class="pip"></span><span data-i18n="voices.eyebrow">Voices</span></div>
+    <h2 data-anim data-i18n="voices.h2">Lines that shaped the craft.</h2>
+    <div class="grid grid--3">
+      <article class="card quote" data-anim>
+        <p data-i18n="voices.q1">“Talk is cheap. Show me the code.”</p>
+        <div class="who" data-i18n="voices.w1"><b>Linus Torvalds</b> — Linux &amp; Git</div>
+      </article>
+      <article class="card quote" data-anim style="--d:110ms">
+        <p data-i18n="voices.q2">“The best way to predict the future is to invent it.”</p>
+        <div class="who" data-i18n="voices.w2"><b>Alan Kay</b> — GUI &amp; OOP pioneer</div>
+      </article>
+      <article class="card quote" data-anim style="--d:220ms">
+        <p data-i18n="voices.q3">“If debugging is the process of removing bugs, then programming must be the process of putting them in.”</p>
+        <div class="who" data-i18n="voices.w3"><b>Edsger W. Dijkstra</b> — CS foundations</div>
+      </article>
+    </div>
+  </div>
+</section>
+
+<!-- ============ FORBIDDEN ============ -->
+<section class="stage" id="forbidden" style="min-height:auto;padding-block:clamp(80px,13vh,140px)">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow" data-anim><span class="pip"></span><span data-i18n="forb.eyebrow">Sacred code</span></div>
+      <h2 data-anim data-i18n="forb.h2">The forbidden module.</h2>
+      <p class="lede" data-anim style="--d:140ms;margin-top:20px" data-i18n="forb.lede">
+        Written at 4 a.m. by someone who no longer works here. It makes no sense.
+        It has never failed. Nobody is allowed to ask why.
+      </p>
+    </div>
+    <div class="forb-grid" data-anim style="--d:200ms">
+      <div class="term forb-code">
+        <div class="term-bar"><div class="dots"><i></i><i></i><i></i></div><b>forbidden.js — production</b></div>
+        <div class="term-body" style="min-height:0"><pre style="margin:0;font:inherit"><span class="ln c">// forbidden.js — prod. do not refactor. do not ask.</span>
+<span class="ln k">var</span><span class="ln"> x = [] + !![] + [];</span>            <span class="ln c">// "true"</span>
+<span class="ln">x = x[+!![] + +!![] + +!![] + +!![]];</span>  <span class="ln c">// "t"</span>
+<span class="ln k">if</span><span class="ln"> (x == ![] + 0) </span><span class="ln k">while</span><span class="ln"> (</span><span class="ln n">false</span><span class="ln">);</span>   <span class="ln c">// always. never.</span>
+<span class="ln k">const</span><span class="ln"> answer = (!![] + [])["length"] ** 0b1000;</span>
+<span class="ln k">function</span><span class="ln f"> ship</span><span class="ln">() { </span><span class="ln k">return</span><span class="ln"> answer != 256 ? </span><span class="ln n">NaN</span><span class="ln"> : !!"0" ? 256 : x }</span>
+<span class="ln f">ship</span><span class="ln">();</span>  <span class="ln c">// nobody knows why. it works.</span></pre></div>
+      </div>
+      <div class="forb-out">
+        <div class="out-title">$ node forbidden.js</div>
+        <pre id="forbidden-out"></pre>
+        <div class="tape" data-i18n="forb.tape">DO NOT TOUCH — IT WORKS.</div>
+        <button class="btn btn-danger" id="touch-btn" data-i18n="forb.btn">🚫 Do not touch</button>
+        <div class="mono-note" id="touch-count"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ POSTER ============ -->
+<section class="stage stage--tall" id="poster" style="min-height:auto;padding-block:clamp(80px,13vh,140px)">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow" data-anim><span class="pip"></span><span data-i18n="poster.eyebrow">Share it</span></div>
+      <h2 data-anim data-i18n="poster.h2">Your poster. Your handle.</h2>
+      <p class="lede" data-anim style="--d:140ms;margin-top:20px" data-i18n="poster.lede">
+        Type your name, pick a palette, download the image — and share it with every developer you know.
+      </p>
+    </div>
+
+    <div class="studio">
+      <div class="poster-frame" data-anim>
+        <canvas id="poster-canvas" width="1200" height="1600" role="img"
+          aria-label="Programmer's Day congratulation poster"></canvas>
+      </div>
+
+      <div class="studio-panel" data-anim style="--d:160ms">
+        <div class="field">
+          <label for="pname" data-i18n="poster.lname">Name on poster</label>
+          <input id="pname" type="text" maxlength="28" value="Erfan" placeholder="Your name" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="phandle" data-i18n="poster.lhandle">Handle</label>
+          <input id="phandle" type="text" maxlength="28" value="@Erfan-8910" placeholder="@your-handle" autocomplete="off">
+        </div>
+        <div class="field">
+          <label for="pmsg" data-i18n="poster.lmsg">Message</label>
+          <input id="pmsg" type="text" maxlength="70" value="To the people who write the world, one line at a time." autocomplete="off">
+        </div>
+        <div class="field">
+          <label data-i18n="poster.lpalette">Palette</label>
+          <div class="swatches" id="swatches"></div>
+        </div>
+        <div class="actions">
+          <button class="btn btn--go" id="dl">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3a1 1 0 0 1 1 1v9.59l3.3-3.3a1 1 0 1 1 1.4 1.42l-5 5a1 1 0 0 1-1.4 0l-5-5A1 1 0 1 1 7.7 10.3l3.3 3.3V4a1 1 0 0 1 1-1Zm-7 15a1 1 0 0 1 1 1v1h12v-1a1 1 0 1 1 2 0v1a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2v-1a1 1 0 0 1 1-1Z"/></svg>
+            <span data-i18n="poster.dl">Download PNG</span>
+          </button>
+          <button class="btn" id="share">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 16a3 3 0 0 0-2.2 1l-6.6-3.8a3.3 3.3 0 0 0 0-2.4l6.6-3.8A3 3 0 1 0 15 5c0 .4 0 .7.2 1L8.6 9.8a3 3 0 1 0 0 4.4l6.6 3.8a3 3 0 1 0 2.8-2Z"/></svg>
+            <span data-i18n="poster.share">Share</span>
+          </button>
+          <button class="btn" id="xshare" title="Post to X / Twitter">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18.9 1.15h3.68l-8.04 9.19L24 22.85h-7.41l-5.8-7.58-6.64 7.58H.47l8.6-9.83L0 1.15h7.59l5.24 6.93 6.07-6.93Zm-1.29 19.5h2.04L6.49 3.24H4.3l13.31 17.41Z"/></svg>
+            <span data-i18n="poster.x">Post to X</span>
+          </button>
+          <button class="btn" id="tgshare" title="Share the poster on Telegram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M21.9 4.3c.3-1.2-.9-2.2-2-1.7L2.6 9.5c-1.2.5-1.2 2.2 0 2.7l4.5 1.6 1.7 5.2c.4 1.1 1.8 1.5 2.6.6l2.5-2.4 4.6 3.4c1 .8 2.5.2 2.7-1L21.9 4.3ZM8.6 13.3l8.5-5.3c.3-.2.6.2.4.4l-6.9 6.5-.3 3-1.7-4.6Z"/></svg>
+            <span data-i18n="poster.tg">Telegram</span>
+          </button>
+          <button class="btn" id="igshare" title="Share the poster on Instagram">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path fill-rule="evenodd" d="M12 2c2.7 0 3 0 4.1.1 1 0 1.8.2 2.4.5.7.3 1.3.7 1.9 1.3.6.6 1 1.2 1.3 1.9.3.6.5 1.4.5 2.4.1 1.1.1 1.4.1 4.1s0 3-.1 4.1c0 1-.2 1.8-.5 2.4-.3.7-.7 1.3-1.3 1.9-.6.6-1.2 1-1.9 1.3-.6.3-1.4.5-2.4.5-1.1.1-1.4.1-4.1.1s-3 0-4.1-.1c-1 0-1.8-.2-2.4-.5-.7-.3-1.3-.7-1.9-1.3-.6-.6-1-1.2-1.3-1.9-.3-.6-.5-1.4-.5-2.4C2 15 2 14.7 2 12s0-3 .1-4.1c0-1 .2-1.8.5-2.4.3-.7.7-1.3 1.3-1.9.6-.6 1.2-1 1.9-1.3.6-.3 1.4-.5 2.4-.5C9 2 9.3 2 12 2Zm0 5a5 5 0 1 0 0 10 5 5 0 0 0 0-10Zm0 2a3 3 0 1 1 0 6 3 3 0 0 1 0-6Zm5.2-3.4a1.2 1.2 0 1 0 0 2.4 1.2 1.2 0 0 0 0-2.4Z"/></svg>
+            <span data-i18n="poster.ig">Instagram</span>
+          </button>
+          <button class="btn" id="copy">
+            <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M9 2h9a2 2 0 0 1 2 2v13a1 1 0 1 1-2 0V4H9a1 1 0 0 1 0-2Zm-4 5h9a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V9a2 2 0 0 1 2-2Zm0 2v11h9V9H5Z"/></svg>
+            <span data-i18n="poster.copy">Copy link</span>
+          </button>
+        </div>
+        <p class="hint" data-i18n="poster.hint">Renders at 1200 × 1600 — perfect for Instagram, X, LinkedIn and Telegram.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ============ CREATOR ============ -->
+<section class="stage" id="creator" style="min-height:auto;padding-block:clamp(80px,13vh,140px)">
+  <div class="wrap">
+    <div class="center">
+      <div class="eyebrow" data-anim><span class="pip"></span><span data-i18n="creator.eyebrow">Made by</span></div>
+      <h2 data-anim data-i18n="creator.h2">Shipped by a human, of course.</h2>
+    </div>
+    <div class="creator" data-anim style="--d:140ms">
+      <div class="avatar">
+        <img id="gh-avatar" src="https://avatars.githubusercontent.com/u/217759075?v=4"
+             alt="Erfan's GitHub avatar" loading="lazy" width="132" height="132">
+      </div>
+      <div class="creator-meta">
+        <b>Erfan</b>
+        <a class="handle" href="https://github.com/Erfan-8910" target="_blank" rel="noopener">github.com/Erfan-8910</a>
+        <a class="handle handle--repo" href="https://github.com/Erfan-8910/256.day" target="_blank" rel="noopener" data-i18n="creator.repo">github.com/Erfan-8910/256.day — star the repo &#11088;</a>
+        <p data-i18n="creator.bio">A technology enthusiast. Built this tribute between two deploys — one file, zero dependencies, infinite coffee.</p>
+        <a class="btn" href="https://github.com/Erfan-8910?tab=repositories" target="_blank" rel="noopener" style="margin-top:20px">
+          <svg viewBox="0 0 16 16" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+          <span data-i18n="creator.btn">Follow on GitHub</span>
+        </a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="big grad" data-anim>&lt;/&gt;</div>
+  <div class="sig" data-anim data-i18n="footer.sig">
+    Crafted by <a href="https://github.com/Erfan-8910" target="_blank" rel="noopener">Erfan-8910</a>
+    &nbsp;·&nbsp; September 13, 2026 &nbsp;·&nbsp; 2<sup>8</sup> = 256
+  </div>
+  <div class="fine" data-i18n="footer.fine">psst — type <kbd>2</kbd><kbd>5</kbd><kbd>6</kbd> anywhere</div>
+</footer>
+
+<script>
+const REDUCED = matchMedia('(prefers-reduced-motion: reduce)').matches;
+const COARSE = matchMedia('(pointer: coarse)').matches;
+const $ = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+
+/* ============================================================
+   CONSOLE EASTER EGG — devs always open DevTools
+   ============================================================ */
+console.log(
+  '%c 256 %c HAPPY PROGRAMMER\u2019S DAY %c github.com/Erfan-8910/256.day ',
+  'background:#0a84ff;color:#fff;font-weight:700;padding:8px 12px;border-radius:8px 0 0 8px',
+  'background:#101018;color:#64d2ff;padding:8px 12px',
+  'background:#101018;color:#9898a3;padding:8px 12px;border-radius:0 8px 8px 0'
+);
+console.log('%cYou opened DevTools. We were already friends. 🧑‍💻', 'color:#bf5af2;font-size:12px');
+
+/* ============================================================
+   GLITCH-DECODE TITLES — first it looks like the site crashed,
+   then the real title decodes out of the wreckage. A surprise.
+   ============================================================ */
+const SCRAMBLE_CHARS = '01'; // decode in pure binary
+const GLITCH_ERRORS = [
+  'Uncaught TypeError: joy is not a function',
+  'ERR_CONTENT_LENGTH_MISMATCH: happiness',
+  'Segmentation fault (core dumped)',
+  'panic: runtime error: index out of range [256]',
+  "undefined is not an object (evaluating 'weekend')",
+  'Fatal error: too much coffee (0x100)',
+  '404: sleep not found'
+];
+let glitchI = 0;
+
+function scramble(el) {
+  const original = el.dataset.text || el.textContent;
+  el.dataset.text = original;
+  if (REDUCED) { el.textContent = original; return; }
+  // phase 1 — the "bug": a fake crash line, RGB-split and twitching
+  el.classList.add('glitching');
+  el.textContent = GLITCH_ERRORS[glitchI++ % GLITCH_ERRORS.length];
+  setTimeout(() => {
+    el.classList.remove('glitching');
+    decodeTitle(el, original); // phase 2 — the surprise: it heals
+  }, 720);
+}
+
+function decodeTitle(el, original) {
+  const chars = SCRAMBLE_CHARS;
+  const dur = 850, t0 = performance.now();
+  (function frame(t) {
+    const p = Math.min((t - t0) / dur, 1);
+    const keep = Math.floor(p * original.length);
+    let out = original.slice(0, keep);
+    for (let i = keep; i < original.length; i++) {
+      out += original[i] === ' ' ? ' ' : chars[(Math.random() * chars.length) | 0];
+    }
+    el.textContent = p < 1 ? out : original;
+    if (p < 1) requestAnimationFrame(frame);
+  })(t0);
+}
+
+/* ============================================================
+   I18N — English only
+   ============================================================ */
+const LANG = 'en'; // English only — the one true language of prod
+const T = k => I18N.en[k] || k;
+
+const I18N = {
+  en: {
+    'title': '256.day — Happy Programmer\u2019s Day',
+    'nav.why': 'Why 256', 'nav.code': 'Code', 'nav.scale': 'Scale', 'nav.voices': 'Voices',
+    'nav.poster': 'Poster', 'nav.cta': 'Get the poster',
+    'hero.date': 'September 13 &nbsp;\u00B7&nbsp; Day 256',
+    'hero.l1': 'Happy', 'hero.l2': 'Programmer\u2019s', 'hero.l3': 'Day.',
+    'hero.lede': 'To everyone who ever shipped at 2 a.m., renamed a file <code style="font-family:var(--mono);font-size:.9em;color:var(--cyan)">final_final_v2</code>, and counted from zero \u2014 the world runs on your curiosity. This one\u2019s for you.',
+    'cd.d': 'Days', 'cd.h': 'Hours', 'cd.m': 'Minutes', 'cd.s': 'Seconds',
+    'cue': 'Scroll',
+    'rail.1': 'Intro', 'rail.2': 'Why 256', 'rail.3': 'Code', 'rail.4': 'Scale',
+    'rail.5': 'Voices', 'rail.6': 'Forbidden', 'rail.7': 'Poster', 'rail.8': 'Creator',
+    'why.eyebrow': 'One byte', 'why.h2': 'Why the 256th day?',
+    'why.lede': '256 is the largest number a single byte can hold \u2014 eight bits, 2<sup>8</sup>. So the 256th day of the year belongs to us: September 13, or September 12 in a leap year.',
+    'why.c1t': 'One byte, one world', 'why.c1p': 'Every colour, character and instruction you have ever seen began as eight humble bits.',
+    'why.c2t': 'Official since 2009', 'why.c2p': 'Registered as a national holiday in Russia, now celebrated by engineers on every continent.',
+    'why.c3t': 'For every stack', 'why.c3p': 'Frontend, backend, mobile, embedded, ML \u2014 if you ship it, today is yours.',
+    'code.eyebrow': 'Hello, World', 'code.h2': 'A tribute, in our language.',
+    'code.lede': 'Because nothing says congrats quite like source code.',
+    'scale.eyebrow': 'The scale', 'scale.h2': 'The world we built.',
+    'scale.s1': 'Million+ developers on GitHub', 'scale.s2': 'Known programming languages',
+    'scale.s3': 'Today\u2019s magic number', 'scale.s4': 'Cups of coffee consumed \u2615',
+    'scale.note': 'Figures are approximate. The coffee count is not.',
+    'voices.eyebrow': 'Voices', 'voices.h2': 'Lines that shaped the craft.',
+    'voices.q1': '\u201cTalk is cheap. Show me the code.\u201d', 'voices.w1': '<b>Linus Torvalds</b> \u2014 Linux &amp; Git',
+    'voices.q2': '\u201cThe best way to predict the future is to invent it.\u201d', 'voices.w2': '<b>Alan Kay</b> \u2014 GUI &amp; OOP pioneer',
+    'voices.q3': '\u201cIf debugging is the process of removing bugs, then programming must be the process of putting them in.\u201d', 'voices.w3': '<b>Edsger W. Dijkstra</b> \u2014 CS foundations',
+    'poster.eyebrow': 'Share it', 'poster.h2': 'Your poster. Your handle.',
+    'poster.lede': 'Type your name, pick a palette, download the image \u2014 and share it with every developer you know.',
+    'poster.lname': 'Name on poster', 'poster.lhandle': 'Handle', 'poster.lmsg': 'Message', 'poster.lpalette': 'Palette',
+    'poster.dl': 'Download PNG', 'poster.share': 'Share', 'poster.x': 'Post to X', 'poster.copy': 'Copy link',
+    'poster.tg': 'Telegram', 'poster.ig': 'Instagram',
+    'poster.hint': 'Renders at 1200 \u00D7 1600 \u2014 perfect for Instagram, X, LinkedIn and Telegram.',
+    'creator.eyebrow': 'Made by', 'creator.h2': 'Shipped by a human, of course.',
+    'creator.bio': 'A technology enthusiast. Built this tribute between two deploys \u2014 one file, zero dependencies, infinite coffee.',
+    'creator.btn': 'Follow on GitHub',
+    'creator.repo': 'github.com/Erfan-8910/256.day \u2014 star the repo \u2B50',
+    'footer.sig': 'Crafted by <a href="https://github.com/Erfan-8910" target="_blank" rel="noopener">Erfan-8910</a> &nbsp;\u00B7&nbsp; September 13, 2026 &nbsp;\u00B7&nbsp; 2<sup>8</sup> = 256',
+    'footer.fine': 'psst \u2014 type <kbd>2</kbd><kbd>5</kbd><kbd>6</kbd> anywhere',
+    'surprise.0': 'Day 256 is live. Happy Programmer\u2019s Day! \u{1F389}',
+    'surprise.1': 'Crafted with \u{1F499} by github.com/Erfan-8910/256.day',
+    'clock.msg': 'It\u2019s day 256. Happy Programmer\u2019s Day! \u{1F389}',
+    'egg.0': '2^8 = 256 \u2014 our sacred number. \u{1F389}',
+    'egg.1': 'A full byte of applause for you. \u{1F4BE}',
+    'egg.2': 'Easter egg unlocked. Happy day 256! \u{1F9D1}\u200D\u{1F4BB}',
+    'toast.dl': 'Poster saved. Go make someone smile. \u{1F4BE}',
+    'toast.share': 'Shared. Legend. \u{1F680}',
+    'toast.copy': 'Link copied \u2014 paste it anywhere. \u{1F517}',
+    'toast.copyfail': 'Copy failed \u2014 grab the URL from the address bar.',
+    'toast.x': 'Poster downloaded \u2014 attach it to your post! \u{1F4CE}',
+    'toast.tg': 'Poster copied \u2014 paste it into any Telegram chat. \u{1F4CB}',
+    'toast.tgdl': 'Poster downloaded \u2014 send it in Telegram. \u{1F4CE}',
+    'toast.ig': 'Poster copied + saved \u2014 paste it in Instagram. \u{1F4CB}',
+    'pstr.pill': 'PROGRAMMER\u2019S DAY', 'pstr.headline': 'Happy Programmer\u2019s Day',
+    'pstr.date': 'SEPTEMBER 13  \u00B7  DAY 256',
+    'pstr.msgdef': 'To the people who write the world, one line at a time.',
+    'pstr.tagline': 'MADE WITH \u2764 AND TOO MUCH COFFEE',
+    'forb.eyebrow': 'Sacred code', 'forb.h2': 'The forbidden module.',
+    'forb.lede': 'Written at 4 a.m. by someone who no longer works here. It makes no sense. It has never failed. Nobody is allowed to ask why.',
+    'forb.tape': 'DO NOT TOUCH \u2014 IT WORKS.', 'forb.btn': '\u{1F6AB} Do not touch',
+    'forb.btn2': 'please stop \u{1F6D1}',
+    'touch.1': 'I said DON\u2019T TOUCH. \u2026ok phew. still works.',
+    'touch.2': 'Seriously? It\u2019s STILL working. Spite-powered.',
+    'touch.n': 'Touched {n} times. It refuses to break. Legend.',
+    'encore.title': 'Afterparty ends in',
+    'encore.done': 'See you next year \u2014 day 256 of 2027.'
+  }
+};
+
+function applyStrings() {
+  document.title = T('title');
+  $$('[data-i18n]').forEach(el => {
+    const v = T(el.dataset.i18n);
+    el.innerHTML = v;
+    if (el.tagName === 'H2') el.dataset.text = v;
+  });
+  if (window.__posterRedraw) window.__posterRedraw();
+}
+
+/* ============================================================
+   STARFIELD
+   ============================================================ */
+(() => {
+  const cv = $('#stars'), ctx = cv.getContext('2d');
+  let W = 0, H = 0, dpr = 1, stars = [];
+  const TINTS = ['#ffffff', '#ffffff', '#ffffff', '#64d2ff', '#bf5af2'];
+
+  function resize() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+    const count = Math.min(160, Math.round(W * H / 11000));
+    stars = Array.from({ length: count }, () => ({
+      x: Math.random() * W,
+      y: Math.random() * H,
+      r: .4 + Math.random() * 1.3,
+      v: .04 + Math.random() * .22,
+      ph: Math.random() * Math.PI * 2,
+      sp: .4 + Math.random() * 1.4,
+      c: TINTS[Math.floor(Math.random() * TINTS.length)]
+    }));
+  }
+
+  function frame(t) {
+    ctx.clearRect(0, 0, W, H);
+    for (const s of stars) {
+      if (!REDUCED) { s.y += s.v; if (s.y > H + 2) { s.y = -2; s.x = Math.random() * W; } }
+      ctx.globalAlpha = .2 + .6 * (.5 + .5 * Math.sin(t / 1000 * s.sp + s.ph));
+      ctx.fillStyle = s.c;
+      ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+    requestAnimationFrame(frame);
+  }
+
+  resize();
+  addEventListener('resize', resize);
+  if (REDUCED) { ctx.clearRect(0, 0, W, H); for (const s of stars) { ctx.globalAlpha = .5; ctx.fillStyle = s.c; ctx.beginPath(); ctx.arc(s.x, s.y, s.r, 0, Math.PI * 2); ctx.fill(); } }
+  else requestAnimationFrame(frame);
+})();
+
+/* ============================================================
+   CURSOR SPOTLIGHT + ORB PARALLAX
+   ============================================================ */
+(() => {
+  if (REDUCED || COARSE) return;
+  const sp = $('#spotlight'), orbs = $$('[data-orb]');
+  let queued = false, mx = innerWidth / 2, my = innerHeight / 2;
+
+  addEventListener('mousemove', e => {
+    mx = e.clientX; my = e.clientY;
+    sp.classList.add('on');
+    if (!queued) {
+      queued = true;
+      requestAnimationFrame(() => {
+        sp.style.setProperty('--mx', mx + 'px');
+        sp.style.setProperty('--my', my + 'px');
+        const nx = mx / innerWidth - .5, ny = my / innerHeight - .5;
+        for (const o of orbs) {
+          const d = +o.dataset.orb || 20;
+          o.style.transform = `translate3d(${nx * d}px,${ny * d}px,0)`;
+        }
+        queued = false;
+      });
+    }
+  }, { passive: true });
+
+  document.addEventListener('mouseleave', () => sp.classList.remove('on'));
+})();
+
+/* ============================================================
+   SCROLL: progress + nav + reveal + rail + pinned 256
+   ============================================================ */
+(() => {
+  const bar = $('#progress'), nav = $('#nav'), n256 = $('#n256'), n256sub = $('#n256sub');
+  const outer = $('#why'), heroWrap = $('#hero-wrap');
+  const railLinks = $$('#rail a');
+  const sections = railLinks.map(a => $(a.getAttribute('href'))).filter(Boolean);
+  let ticking = false;
+
+  function update() {
+    const y = scrollY;
+    const max = document.documentElement.scrollHeight - innerHeight;
+    bar.style.width = (max > 0 ? Math.min(y / max, 1) * 100 : 0) + '%';
+    nav.classList.toggle('stuck', y > 24);
+
+    // hero drifts away as you leave it (Apple-style depth)
+    if (heroWrap && !REDUCED) {
+      const p = Math.min(y / innerHeight, 1);
+      heroWrap.style.transform = `translate3d(0,${(y * .22).toFixed(1)}px,0)`;
+      heroWrap.style.opacity = Math.max(1 - p * 1.15, 0).toFixed(3);
+    }
+
+    // pinned 256: scale + glow driven by scroll through the pinned range
+    if (outer) {
+      const r = outer.getBoundingClientRect();
+      const span = r.height - innerHeight;
+      const p = span > 0 ? Math.min(Math.max(-r.top / span, 0), 1) : 1;
+      const s = .58 + .42 * p;
+      n256.style.setProperty('--s', s.toFixed(3));
+      n256.style.filter = `drop-shadow(0 0 ${Math.round(40 + 90 * p)}px rgba(10,132,255,${(.22 + .3 * p).toFixed(2)}))`;
+      n256sub.style.setProperty('--o', (1 - Math.max(0, (p - .78) / .22)).toFixed(2));
+    }
+
+    // rail highlight
+    const mid = innerHeight * .42;
+    let active = sections[0];
+    for (const sec of sections) {
+      const r = sec.getBoundingClientRect();
+      if (r.top <= mid && r.bottom > mid) active = sec;
+    }
+    for (const a of railLinks) a.classList.toggle('on', active && a.getAttribute('href') === '#' + active.id);
+
+    ticking = false;
+  }
+
+  addEventListener('scroll', () => { if (!ticking) { ticking = true; requestAnimationFrame(update); } }, { passive: true });
+  addEventListener('resize', update);
+  update();
+})();
+
+(() => {
+  const els = $$('[data-anim]');
+  function reveal(el) {
+    el.classList.add('in');
+    if (!REDUCED && el.tagName === 'H2') scramble(el);
+    // after the entrance finishes, free the element from its stagger delay
+    // so hover / tilt transitions respond instantly.
+    setTimeout(() => {
+      el.style.setProperty('--d', '0ms');
+      if (el.classList.contains('card'))
+        el.style.transition = 'transform .18s ease, border-color .5s, background .5s, box-shadow .5s';
+    }, 1400);
+  }
+
+  if (REDUCED) { els.forEach(el => el.classList.add('in')); return; }
+
+  // Safety sweep: anything whose top edge has entered the viewport becomes
+  // visible. This is what makes anchor jumps (nav / rail clicks) safe —
+  // elements the scroll skips over entirely would otherwise stay hidden
+  // forever. It also covers content at the very bottom of the page, which a
+  // ratio-based observer can never trigger at max scroll.
+  function sweep() {
+    for (const el of els) {
+      if (!el.classList.contains('in') && el.getBoundingClientRect().top < innerHeight) reveal(el);
+    }
+  }
+
+  const io = new IntersectionObserver(es => {
+    for (const e of es) if (e.isIntersecting) { reveal(e.target); io.unobserve(e.target); }
+  }, { threshold: 0, rootMargin: '0px 0px -8% 0px' });
+  els.forEach(el => io.observe(el));
+
+  let queued = false;
+  addEventListener('scroll', () => {
+    if (!queued) { queued = true; requestAnimationFrame(() => { sweep(); queued = false; }); }
+  }, { passive: true });
+
+  sweep(); // catch anything already in view on load
+})();
+
+/* ============================================================
+   TOAST  (declared before SURPRISE: the day-arrival path calls it
+   synchronously during first script evaluation)
+   ============================================================ */
+let toastTimer;
+function toast(msg, ms = 2600) {
+  const t = $('#toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), ms);
+}
+
+/* ============================================================
+   CONFETTI  (listens for 'confetti:storm' from anywhere)
+   ============================================================ */
+(() => {
+  const cv = $('#confetti'), ctx = cv.getContext('2d');
+  let W = 0, H = 0, dpr = 1, parts = [], running = false;
+  const COLORS = ['#64d2ff', '#0a84ff', '#bf5af2', '#ff375f', '#30d158', '#ffd60a', '#f5f5f7'];
+
+  function resize() {
+    dpr = Math.min(devicePixelRatio || 1, 2);
+    W = innerWidth; H = innerHeight;
+    cv.width = Math.round(W * dpr); cv.height = Math.round(H * dpr);
+    ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  }
+
+  function burst(x, y, n = 150, power = 11) {
+    for (let i = 0; i < n; i++) {
+      const a = Math.random() * Math.PI * 2, sp = 3 + Math.random() * power;
+      parts.push({
+        x, y,
+        vx: Math.cos(a) * sp, vy: Math.sin(a) * sp - 5,
+        g: .15 + Math.random() * .12,
+        w: 5 + Math.random() * 7, h: 3 + Math.random() * 5,
+        rot: Math.random() * Math.PI, vr: (Math.random() - .5) * .34,
+        c: COLORS[Math.floor(Math.random() * COLORS.length)],
+        life: 1, decay: .006 + Math.random() * .009
+      });
+    }
+    if (!running) { running = true; requestAnimationFrame(loop); }
+  }
+
+  function loop() {
+    ctx.clearRect(0, 0, W, H);
+    parts = parts.filter(p => p.life > 0 && p.y < H + 40);
+    for (const p of parts) {
+      p.x += p.vx; p.y += p.vy; p.vy += p.g; p.vx *= .99;
+      p.rot += p.vr; p.life -= p.decay;
+      ctx.save();
+      ctx.translate(p.x, p.y); ctx.rotate(p.rot);
+      ctx.globalAlpha = Math.max(p.life, 0);
+      ctx.fillStyle = p.c;
+      ctx.fillRect(-p.w / 2, -p.h / 2, p.w, p.h);
+      ctx.restore();
+    }
+    if (parts.length) requestAnimationFrame(loop);
+    else { running = false; ctx.clearRect(0, 0, W, H); }
+  }
+
+  function storm() {
+    burst(innerWidth * .5, innerHeight * .3, 190, 13);
+    setTimeout(() => burst(innerWidth * .14, innerHeight * .22, 120, 11), 170);
+    setTimeout(() => burst(innerWidth * .86, innerHeight * .22, 120, 11), 340);
+    setTimeout(() => burst(innerWidth * .5, innerHeight * .12, 140, 12), 560);
+  }
+
+  resize();
+  addEventListener('resize', resize);
+  document.addEventListener('confetti:storm', storm);
+  cv.addEventListener('confetti:burst', e => burst(e.detail.x, e.detail.y, e.detail.n || 150));
+})();
+
+/* ============================================================
+   COUNTDOWN → then the surprise
+   ============================================================ */
+const SURPRISE = (() => {
+  let fired = false;
+  function fire(auto) {
+    if (fired && auto) return;
+    fired = true;
+    document.dispatchEvent(new CustomEvent('confetti:storm'));
+    toast(T('surprise.0'), 4200);
+    setTimeout(() => toast(T('surprise.1'), 4200), 4600); // the credit beat
+  }
+
+  return { fire };
+})();
+
+(() => {
+  const TARGET = Date.parse('2026-09-13T00:00:00+03:30');
+  const el = { d: $('#c-d'), h: $('#c-h'), m: $('#c-m'), s: $('#c-s') };
+  const pad = n => String(n).padStart(2, '0');
+
+  const ENCORE = TARGET + 864e5; // the party gets a 24h encore
+  let mode = 'main'; // main -> encore -> done
+
+  function buildEncore() {
+    $('#clock').innerHTML =
+      '<div class="clock-msg grad" style="width:100%">' + T('clock.msg') + '</div>' +
+      '<div class="cell"><b id="e-h">--</b><i>Hours</i></div>' +
+      '<div class="cell"><b id="e-m">--</b><i>Minutes</i></div>' +
+      '<div class="cell"><b id="e-s">--</b><i>Seconds</i></div>' +
+      '<div class="countdown-label" style="width:100%;margin-top:18px">' + T('encore.title') + '</div>';
+  }
+
+  let iv = null; // must exist before the first tick — if the page ever loads
+  // after the day has arrived, tick() takes the surprise branch immediately.
+  function tick() {
+    const now = Date.now();
+    const left = TARGET - now;
+    if (left > 0) {
+      el.d.textContent = Math.floor(left / 864e5);
+      el.h.textContent = pad(Math.floor(left / 36e5) % 24);
+      el.m.textContent = pad(Math.floor(left / 6e4) % 60);
+      el.s.textContent = pad(Math.floor(left / 1e3) % 60);
+      return;
+    }
+    SURPRISE.fire(true);
+    const eLeft = ENCORE - now;
+    if (eLeft > 0) {
+      if (mode !== 'encore') { buildEncore(); mode = 'encore'; }
+      $('#e-h').textContent = pad(Math.floor(eLeft / 36e5) % 24);
+      $('#e-m').textContent = pad(Math.floor(eLeft / 6e4) % 60);
+      $('#e-s').textContent = pad(Math.floor(eLeft / 1e3) % 60);
+      return;
+    }
+    if (mode !== 'done') {
+      mode = 'done';
+      $('#clock').innerHTML = '<div class="clock-msg grad">' + T('encore.done') + '</div>';
+    }
+  }
+  tick();
+  iv = setInterval(tick, 1000);
+})();
+
+/* ============================================================
+   TERMINAL TYPING
+   ============================================================ */
+(() => {
+  const LINES = [
+    { t: '// September 13 — Programmer\'s Day', c: 'c' },
+    { t: 'const dev = {', c: 'k' },
+    { t: '  fuel: "coffee ☕",', c: '' },
+    { t: '  superpower: "caffeine → code",', c: '' },
+    { t: '  bugsFixed: Infinity,', c: '' },
+    { t: '  sleep: null // 404 not found', c: 'c' },
+    { t: '};', c: 'k' },
+    { t: '', c: '' },
+    { t: 'const tribute = (name: string) =>', c: 'f' },
+    { t: '  `Happy Programmer\'s Day, ${name}! 💙`;', c: 'n' },
+    { t: '', c: '' },
+    { t: 'console.log(tribute("Erfan"));', c: 'f' },
+    { t: '// → Happy Programmer\'s Day, Erfan! 💙', c: 's' }
+  ];
+  const pre = $('#typed');
+  let started = false;
+
+  function run() {
+    let li = 0;
+    pre.textContent = '';
+    (function nextLine() {
+      if (li >= LINES.length) {
+        const c = document.createElement('span');
+        c.className = 'caret';
+        pre.appendChild(c);
+        return;
+      }
+      const line = LINES[li++];
+      const span = document.createElement('span');
+      span.className = 'ln ' + line.c;
+      pre.appendChild(span);
+      pre.appendChild(document.createTextNode('\n'));
+      let ci = 0;
+      (function typeChar() {
+        if (ci < line.t.length) {
+          span.textContent += line.t[ci++];
+          setTimeout(typeChar, REDUCED ? 0 : 16 + Math.random() * 34);
+        } else setTimeout(nextLine, REDUCED ? 0 : 170);
+      })();
+    })();
+  }
+
+  const io = new IntersectionObserver(es => {
+    for (const e of es) if (e.isIntersecting && !started) { started = true; run(); io.disconnect(); }
+  }, { threshold: .3 });
+  io.observe($('.term'));
+})();
+
+/* ============================================================
+   MARQUEE
+   ============================================================ */
+(() => {
+  const LANGS = ['JavaScript', 'TypeScript', 'Python', 'Rust', 'Go', 'C++', 'Swift', 'Kotlin',
+    'Java', 'PHP', 'Ruby', 'Elixir', 'Dart', 'Zig', 'Haskell', 'SQL'];
+  const half = LANGS.map(l => `<b>${l}</b>`).join('');
+  $('#track').innerHTML = `<span>${half}</span><span>${half}</span>`;
+})();
+
+/* ============================================================
+   COUNT-UP
+   ============================================================ */
+(() => {
+  function up(el) {
+    const to = +el.dataset.count, t0 = performance.now(), dur = 1900;
+    (function frame(t) {
+      const p = Math.min((t - t0) / dur, 1);
+      el.textContent = Math.round(to * (1 - Math.pow(1 - p, 3))).toLocaleString('en-US');
+      if (p < 1) requestAnimationFrame(frame);
+    })(t0);
+  }
+  const io = new IntersectionObserver(es => {
+    for (const e of es) if (e.isIntersecting) { up(e.target); io.unobserve(e.target); }
+  }, { threshold: .55 });
+  $$('[data-count]').forEach(el => io.observe(el));
+})();
+
+/* ============================================================
+   EASTER EGG — type 256
+   ============================================================ */
+(() => {
+  const MSGS = () => [T('egg.0'), T('egg.1'), T('egg.2')];
+  let buf = '', i = 0;
+  addEventListener('keydown', e => {
+    if (e.metaKey || e.ctrlKey || e.altKey) return;
+    const t = e.target;
+    // never hijack digits typed into inputs / text areas
+    if (t && (t.tagName === 'INPUT' || t.tagName === 'TEXTAREA' || t.isContentEditable)) return;
+    if (!/^\d$/.test(e.key)) { buf = ''; return; }
+    buf = (buf + e.key).slice(-3);
+    if (buf !== '256') return;
+    buf = '';
+    toast(MSGS()[i++ % 3]);
+    document.dispatchEvent(new CustomEvent('confetti:storm'));
+  });
+})();
+
+/* ============================================================
+   CUSTOM CURSOR (fine pointers only)
+   ============================================================ */
+(() => {
+  if (REDUCED || COARSE) return;
+  document.documentElement.classList.add('has-cursor');
+  const dot = document.createElement('div');
+  const ring = document.createElement('div');
+  dot.className = 'cursor-dot';
+  ring.className = 'cursor-ring';
+  document.body.append(dot, ring);
+
+  let x = innerWidth / 2, y = innerHeight / 2, rx = x, ry = y;
+  addEventListener('mousemove', e => {
+    x = e.clientX; y = e.clientY;
+    dot.style.transform = `translate(${x}px,${y}px) translate(-50%,-50%)`;
+  }, { passive: true });
+  (function loop() {
+    rx += (x - rx) * .16;
+    ry += (y - ry) * .16;
+    ring.style.transform = `translate(${rx.toFixed(1)}px,${ry.toFixed(1)}px) translate(-50%,-50%)`;
+    requestAnimationFrame(loop);
+  })();
+  addEventListener('mouseover', e => {
+    const hot = e.target.closest && e.target.closest('a,button,input,.card,.sw,label');
+    document.body.classList.toggle('cursor-hover', !!hot);
+  }, { passive: true });
+})();
+
+/* ============================================================
+   3D TILT ON CARDS
+   ============================================================ */
+(() => {
+  if (REDUCED || COARSE) return;
+  for (const c of $$('.card')) {
+    c.addEventListener('mousemove', e => {
+      const r = c.getBoundingClientRect();
+      const px = (e.clientX - r.left) / r.width - .5;
+      const py = (e.clientY - r.top) / r.height - .5;
+      c.style.setProperty('--ry', (px * 7).toFixed(2) + 'deg');
+      c.style.setProperty('--rx', (-py * 7).toFixed(2) + 'deg');
+    }, { passive: true });
+    c.addEventListener('mouseleave', () => {
+      c.style.setProperty('--rx', '0deg');
+      c.style.setProperty('--ry', '0deg');
+    });
+  }
+})();
+
+/* ============================================================
+   POSTER STUDIO
+   ============================================================ */
+(() => {
+  const cv = $('#poster-canvas'), ctx = cv.getContext('2d');
+  const W = cv.width, H = cv.height;
+  const nameInput = $('#pname'), handleInput = $('#phandle');
+  const box = $('#swatches');
+
+  const THEMES = [
+    { id: 'aurora',  a: '#0a84ff', b: '#bf5af2', c: '#64d2ff', label: 'Aurora' },
+    { id: 'sunset',  a: '#ff375f', b: '#ff9f0a', c: '#ffd60a', label: 'Sunset' },
+    { id: 'matrix',  a: '#30d158', b: '#0a84ff', c: '#64d2ff', label: 'Matrix' },
+    { id: 'neon',    a: '#bf5af2', b: '#ff375f', c: '#5e5ce6', label: 'Neon' },
+    { id: 'graphite',a: '#8e8e93', b: '#48484a', c: '#d1d1d6', label: 'Graphite' },
+    { id: 'ocean',   a: '#00c7ff', b: '#0a84ff', c: '#5e5ce6', label: 'Ocean' },
+    { id: 'candy',   a: '#ff375f', b: '#bf5af2', c: '#64d2ff', label: 'Candy' },
+    { id: 'gold',    a: '#ffd60a', b: '#ff9f0a', c: '#ff375f', label: 'Gold' },
+    { id: 'mint',    a: '#30d158', b: '#64d2ff', c: '#0a84ff', label: 'Mint' }
+  ];
+  let theme = THEMES[0];
+
+  // swatches
+  for (const t of THEMES) {
+    const b = document.createElement('button');
+    b.type = 'button';
+    b.className = 'sw';
+    b.setAttribute('aria-pressed', String(t === theme));
+    b.setAttribute('aria-label', t.label + ' palette');
+    b.title = t.label;
+    b.style.background = `linear-gradient(135deg,${t.a},${t.b} 55%,${t.c})`;
+    b.addEventListener('click', () => {
+      theme = t;
+      $$('.sw', box).forEach(s => s.setAttribute('aria-pressed', 'false'));
+      b.setAttribute('aria-pressed', 'true');
+      draw();
+    });
+    box.appendChild(b);
+  }
+
+  const monoF = () => "'JetBrains Mono', ui-monospace, Menlo, monospace";
+  const sansF = () => "'Space Grotesk', -apple-system, 'Segoe UI', system-ui, sans-serif";
+
+  function rr(x, y, w, h, r) {
+    ctx.beginPath();
+    ctx.moveTo(x + r, y);
+    ctx.arcTo(x + w, y, x + w, y + h, r);
+    ctx.arcTo(x + w, y + h, x, y + h, r);
+    ctx.arcTo(x, y + h, x, y, r);
+    ctx.arcTo(x, y, x + w, y, r);
+    ctx.closePath();
+  }
+
+  function fit(text, maxW, weight, size, family) {
+    let s = size;
+    ctx.font = `${weight} ${s}px ${family}`;
+    while (ctx.measureText(text).width > maxW && s > 12) { s -= 2; ctx.font = `${weight} ${s}px ${family}`; }
+    return s;
+  }
+
+  function wrap(text, maxW, weight, size, family) {
+    ctx.font = `${weight} ${size}px ${family}`;
+    const words = text.split(/\s+/).filter(Boolean);
+    const lines = [];
+    let line = '';
+    for (const w of words) {
+      const trial = line ? line + ' ' + w : w;
+      if (ctx.measureText(trial).width > maxW && line) { lines.push(line); line = w; }
+      else line = trial;
+    }
+    if (line) lines.push(line);
+    return lines.slice(0, 3);
+  }
+
+  function draw() {
+    const baseDir = 'ltr';
+    ctx.direction = baseDir;
+    const mono = monoF(), sans = sansF();
+    const name = (nameInput.value || 'Your Name').trim().slice(0, 28);
+    const handle = (handleInput.value || '@handle').trim().slice(0, 28);
+    const message = ($('#pmsg').value || T('pstr.msgdef')).trim();
+
+    // background
+    const bg = ctx.createLinearGradient(0, 0, W, H);
+    bg.addColorStop(0, '#08080d');
+    bg.addColorStop(.55, '#0a0a12');
+    bg.addColorStop(1, '#050508');
+    ctx.fillStyle = bg;
+    ctx.fillRect(0, 0, W, H);
+
+    // glow orbs
+    const orbs = [
+      [W * .82, H * .16, W * .55, theme.a, .34],
+      [W * .1, H * .82, W * .5, theme.b, .28],
+      [W * .5, H * .5, W * .42, theme.c, .12]
+    ];
+    for (const [x, y, r, col, al] of orbs) {
+      const g = ctx.createRadialGradient(x, y, 0, x, y, r);
+      g.addColorStop(0, col + Math.round(al * 255).toString(16).padStart(2, '0'));
+      g.addColorStop(1, col + '00');
+      ctx.fillStyle = g;
+      ctx.fillRect(0, 0, W, H);
+    }
+
+    // grid lines
+    ctx.strokeStyle = 'rgba(255,255,255,.045)';
+    ctx.lineWidth = 1;
+    for (let x = 0; x <= W; x += 60) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (let y = 0; y <= H; y += 60) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    // stars
+    for (let i = 0; i < 130; i++) {
+      const x = (Math.sin(i * 12.9898) * 43758.5453) % 1, y = (Math.sin(i * 78.233) * 12345.6789) % 1;
+      ctx.globalAlpha = .12 + Math.abs(Math.sin(i)) * .5;
+      ctx.fillStyle = '#fff';
+      ctx.beginPath();
+      ctx.arc(Math.abs(x) * W, Math.abs(y) * H, .6 + Math.abs(Math.sin(i * 3)) * 1.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+    ctx.globalAlpha = 1;
+
+    // film grain
+    for (let i = 0; i < 700; i++) {
+      ctx.globalAlpha = Math.random() * .05;
+      ctx.fillStyle = '#fff';
+      ctx.fillRect(Math.random() * W, Math.random() * H, 1, 1);
+    }
+    ctx.globalAlpha = 1;
+
+    // frame
+    ctx.strokeStyle = 'rgba(255,255,255,.14)';
+    ctx.lineWidth = 2;
+    rr(44, 44, W - 88, H - 88, 40);
+    ctx.stroke();
+
+    // eyebrow pill (measure AFTER setting letter-spacing, or the text overflows)
+    const label = T('pstr.pill');
+    ctx.font = `500 24px ${mono}`;
+    ctx.letterSpacing = '5px';
+    const pillW = ctx.measureText(label).width + 74;
+    const pillX = (W - pillW) / 2, pillY = 150;
+    rr(pillX, pillY, pillW, 62, 31);
+    ctx.fillStyle = 'rgba(255,255,255,.06)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.16)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = theme.c;
+    ctx.beginPath();
+    ctx.arc(pillX + 34, pillY + 31, 7, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.fillStyle = 'rgba(245,245,247,.92)';
+    ctx.textAlign = 'left';
+    ctx.textBaseline = 'middle';
+    ctx.fillText(label, pillX + 56, pillY + 33);
+    ctx.letterSpacing = '0px';
+    ctx.textBaseline = 'alphabetic';
+
+    // corner marks (code tokens stay LTR)
+    ctx.direction = 'ltr';
+    ctx.textAlign = 'left';
+    ctx.font = `400 21px ${mono}`;
+    ctx.fillStyle = 'rgba(255,255,255,.35)';
+    ctx.fillText('// est. 2009', 78, 126);
+    ctx.textAlign = 'right';
+    ctx.font = `700 32px ${mono}`;
+    ctx.fillStyle = theme.c;
+    ctx.globalAlpha = .85;
+    ctx.fillText('</>', W - 76, 132);
+    ctx.globalAlpha = 1;
+
+    ctx.direction = baseDir;
+
+    // rotated edge text
+    ctx.save();
+    ctx.direction = 'ltr';
+    ctx.translate(96, H / 2);
+    ctx.rotate(-Math.PI / 2);
+    ctx.textAlign = 'center';
+    ctx.font = `400 19px ${mono}`;
+    ctx.letterSpacing = '8px';
+    ctx.fillStyle = 'rgba(255,255,255,.13)';
+    ctx.fillText('HAPPY PROGRAMMER\u2019S DAY \u00B7 2^8 = 256 \u00B7 SHIP IT', 0, 0);
+    ctx.restore();
+    ctx.letterSpacing = '0px';
+    ctx.direction = baseDir;
+
+    // 256
+    ctx.textAlign = 'center';
+    const size = fit('256', W - 220, 700, 420, sans);
+    ctx.font = `700 ${size}px ${sans}`;
+    const grad = ctx.createLinearGradient(W * .18, 0, W * .82, 0);
+    grad.addColorStop(0, theme.c);
+    grad.addColorStop(.45, theme.a);
+    grad.addColorStop(1, theme.b);
+    ctx.shadowColor = theme.a;
+    ctx.shadowBlur = 90;
+    ctx.fillStyle = grad;
+    ctx.fillText('256', W / 2, 560);
+    ctx.shadowBlur = 0;
+
+    // subhead (formula always LTR)
+    ctx.direction = 'ltr';
+    ctx.font = `400 30px ${mono}`;
+    ctx.fillStyle = 'rgba(160,175,195,.95)';
+    ctx.letterSpacing = '6px';
+    ctx.fillText('2 ^ 8 = 256', W / 2, 660);
+    ctx.letterSpacing = '0px';
+    ctx.direction = baseDir;
+
+    // headline
+    const hl = T('pstr.headline');
+    const hlw = 600;
+    ctx.font = `${hlw} 66px ${sans}`;
+    const hls = fit(hl, W - 160, hlw, 66, sans);
+    ctx.font = `${hlw} ${hls}px ${sans}`;
+    ctx.fillStyle = '#f5f5f7';
+    ctx.fillText(hl, W / 2, 780);
+
+    // message (user-customizable, wrapped)
+    ctx.fillStyle = 'rgba(161,161,173,.95)';
+    wrap(message, W - 320, 300, 27, sans).forEach((l, i) => {
+      ctx.font = `300 27px ${sans}`;
+      ctx.fillText(l, W / 2, 856 + i * 42);
+    });
+
+    // divider
+    const dg = ctx.createLinearGradient(W * .3, 0, W * .7, 0);
+    dg.addColorStop(0, theme.a + '00');
+    dg.addColorStop(.5, theme.c);
+    dg.addColorStop(1, theme.b + '00');
+    ctx.strokeStyle = dg;
+    ctx.lineWidth = 2;
+    ctx.beginPath();
+    ctx.moveTo(W * .3, 968);
+    ctx.lineTo(W * .7, 968);
+    ctx.stroke();
+
+    // date
+    ctx.font = `500 25px ${mono}`;
+    ctx.fillStyle = 'rgba(210,215,225,.9)';
+    ctx.letterSpacing = '4px';
+    ctx.fillText(T('pstr.date'), W / 2, 1030);
+    ctx.letterSpacing = '0px';
+
+    // code badge (code is LTR)
+    ctx.direction = 'ltr';
+    ctx.font = `400 23px ${mono}`;
+    const code = '</>  console.log("thank you");';
+    const cw = ctx.measureText(code).width + 66;
+    rr((W - cw) / 2, 1104, cw, 60, 30);
+    ctx.fillStyle = 'rgba(0,0,0,.42)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.13)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+    ctx.fillStyle = 'rgba(165,214,255,.95)';
+    ctx.fillText(code, W / 2, 1135);
+    ctx.direction = baseDir;
+
+    // footer card: site + GitHub mark + name
+    const fw = 900, fh = 168, fx = (W - fw) / 2, fy = H - 300;
+    rr(fx, fy, fw, fh, 30);
+    ctx.fillStyle = 'rgba(255,255,255,.045)';
+    ctx.fill();
+    ctx.strokeStyle = 'rgba(255,255,255,.12)';
+    ctx.lineWidth = 1.5;
+    ctx.stroke();
+
+    // GitHub mark (scaled path)
+    const gs = 2.9, gx = fx + 52, gy = fy + 52;
+    ctx.save();
+    ctx.translate(gx, gy);
+    ctx.scale(gs, gs);
+    ctx.fillStyle = '#f5f5f7';
+    ctx.beginPath();
+    const P = new Path2D('M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27s1.36.09 2 .27c1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z');
+    ctx.fill(P);
+    ctx.restore();
+
+    // name + handle inside card
+    ctx.direction = 'ltr';
+    ctx.textAlign = 'left';
+    const ns = fit(name, fw - 250, 600, 54, sans);
+    ctx.font = `600 ${ns}px ${sans}`;
+    ctx.fillStyle = '#f5f5f7';
+    ctx.textBaseline = 'alphabetic';
+    ctx.fillText(name, gx + 72, fy + 84);
+
+    ctx.font = `400 26px ${mono}`;
+    ctx.fillStyle = theme.c;
+    ctx.fillText(handle, gx + 72, fy + 126);
+
+    // right side of footer card: site mark (LTR tokens)
+    ctx.direction = 'ltr';
+    ctx.textAlign = 'right';
+    ctx.font = `500 22px ${mono}`;
+    ctx.fillStyle = 'rgba(161,161,173,.85)';
+    ctx.letterSpacing = '3px';
+    ctx.fillText('256.day', fx + fw - 44, fy + 76);
+    ctx.font = `400 20px ${mono}`;
+    ctx.fillStyle = 'rgba(110,110,122,.95)';
+    ctx.fillText('github.com/Erfan-8910/256.day', fx + fw - 44, fy + 112);
+    ctx.letterSpacing = '0px';
+    ctx.textAlign = 'center';
+
+    // bottom tagline
+    ctx.font = `400 22px ${mono}`;
+    ctx.fillStyle = 'rgba(110,110,122,.9)';
+    ctx.letterSpacing = '5px';
+    ctx.fillText(T('pstr.tagline'), W / 2, H - 96);
+    ctx.letterSpacing = '0px';
+  }
+
+  let raf;
+  const queue = () => { cancelAnimationFrame(raf); raf = requestAnimationFrame(draw); };
+  nameInput.addEventListener('input', queue);
+  handleInput.addEventListener('input', queue);
+  $('#pmsg').addEventListener('input', queue);
+  window.__posterRedraw = queue;
+
+  // draw once webfonts are ready so metrics are correct
+  draw();
+  if (document.fonts && document.fonts.ready) document.fonts.ready.then(draw).catch(() => {});
+  // safety re-draw after fonts settle
+  setTimeout(draw, 900);
+
+  function blob() {
+    return new Promise(res => cv.toBlob(res, 'image/png'));
+  }
+
+  function saveBlob(b) {
+    const url = URL.createObjectURL(b);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `programmers-day-256-${(nameInput.value || 'poster').toLowerCase().replace(/[^a-z0-9]+/g, '-')}.png`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 4000);
+  }
+  $('#dl').addEventListener('click', async () => {
+    saveBlob(await blob());
+    toast(T('toast.dl'));
+  });
+  // ---- sharing: every button opens its app directly --------------
+  const SHARE_TEXT = 'Happy Programmer\u2019s Day! \u{1F9D1}\u200D\u{1F4BB} 2^8 = 256\n#256Day #ProgrammersDay';
+  async function copyImage() {
+    try {
+      await navigator.clipboard.write([new ClipboardItem({ 'image/png': await blob() })]);
+      return true;
+    } catch { return false; }
+  }
+
+  // X / Twitter: the composer opens in a new tab right away and the
+  // poster downloads next to it, ready to attach.
+  $('#xshare').addEventListener('click', async () => {
+    saveBlob(await blob());
+    window.open('https://twitter.com/intent/tweet?text=' + encodeURIComponent(SHARE_TEXT) +
+      '&url=' + encodeURIComponent(location.href), '_blank', 'noopener');
+    toast(T('toast.x'));
+  });
+
+  // Telegram: opens Telegram's share screen at once (app on phones,
+  // web chooser on desktop); the poster image is copied to the
+  // clipboard so it can be pasted straight into the chat.
+  $('#tgshare').addEventListener('click', async () => {
+    window.open('https://t.me/share/url?url=' + encodeURIComponent(location.href) +
+      '&text=' + encodeURIComponent(SHARE_TEXT), '_blank', 'noopener');
+    const ok = await copyImage();
+    if (!ok) saveBlob(await blob());
+    toast(ok ? T('toast.tg') : T('toast.tgdl'));
+  });
+
+  // Instagram: no web share endpoint exists for IG — the app/site
+  // opens while the poster lands in downloads + clipboard, ready to post.
+  $('#igshare').addEventListener('click', async () => {
+    window.open('https://www.instagram.com/', '_blank', 'noopener');
+    const ok = await copyImage();
+    saveBlob(await blob());
+    toast(ok ? T('toast.ig') : T('toast.dl'));
+  });
+
+  // generic Share: OS share sheet with the image where the platform
+  // supports it — falls back to link copy.
+  $('#share').addEventListener('click', async () => {
+    const b = await blob();
+    const file = new File([b], 'programmers-day-256.png', { type: 'image/png' });
+    const data = {
+      title: 'Happy Programmer\u2019s Day \u2014 256',
+      text: 'September 13, day 256. Happy Programmer\u2019s Day! \u{1F9D1}\u200D\u{1F4BB}\n#256Day #ProgrammersDay',
+      url: location.href
+    };
+    try {
+      if (navigator.canShare && navigator.canShare({ files: [file] })) {
+        await navigator.share({ ...data, files: [file] });
+        toast(T('toast.share'));
+      } else if (navigator.share) {
+        await navigator.share(data);
+        toast(T('toast.share'));
+      } else {
+        fallbackCopy(data.url);
+      }
+    } catch (err) {
+      if (err && err.name === 'AbortError') return;
+      fallbackCopy(data.url);
+    }
+  });
+
+  function fallbackCopy(url) {
+    const done = () => toast(T('toast.copy'));
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(url).then(done).catch(() => manualCopy(url, done));
+    } else manualCopy(url, done);
+  }
+  function manualCopy(text, done) {
+    const ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.cssText = 'position:fixed;opacity:0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); done(); }
+    catch { toast(T('toast.copyfail')); }
+    ta.remove();
+  }
+
+  $('#copy').addEventListener('click', () => fallbackCopy(location.href));
+})();
+
+/* ============================================================
+   THE FORBIDDEN MODULE — wrong code, right results
+   ============================================================ */
+(() => {
+  const out = $('#forbidden-out');
+  const LINES = [
+    ['warn', 'warn  12 problems found'],
+    ['warn', 'warn  12 problems ignored'],
+    ['ok',   '\u2713 result: 256'],
+    ['ok',   '\u2713 tests: 0 passed, 0 failed (we don\u2019t talk about tests)'],
+    ['ok',   '\u2713 uptime: 873 days \u2014 still working']
+  ];
+  let started = false;
+  function run() {
+    LINES.forEach((l, i) => setTimeout(() => {
+      const s = document.createElement('span');
+      s.className = l[0];
+      s.textContent = l[1] + '\n';
+      out.appendChild(s);
+    }, REDUCED ? 0 : i * 420));
+  }
+  const io = new IntersectionObserver(es => {
+    for (const e of es) if (e.isIntersecting && !started) { started = true; run(); io.disconnect(); }
+  }, { threshold: .3 });
+  io.observe($('.forb-grid'));
+
+  let touches = 0;
+  const btn = $('#touch-btn'), cnt = $('#touch-count');
+  btn.addEventListener('click', () => {
+    touches++;
+    document.documentElement.classList.add('freakout');
+    setTimeout(() => document.documentElement.classList.remove('freakout'), 780);
+    const bad = document.createElement('span');
+    bad.className = 'bad';
+    bad.textContent = `\u2717 human touched it (${touches})\n`;
+    out.appendChild(bad);
+    setTimeout(() => {
+      const ok = document.createElement('span');
+      ok.className = 'ok';
+      ok.textContent = '\u2713 \u2026still working. of course.\n';
+      out.appendChild(ok);
+    }, REDUCED ? 0 : 520);
+    cnt.textContent = `touched ${touches} time${touches === 1 ? '' : 's'}`;
+    toast(touches === 1 ? T('touch.1') : touches === 2 ? T('touch.2')
+      : T('touch.n').replace('{n}', String(touches)), 3200);
+    if (touches >= 4) btn.innerHTML = T('forb.btn2');
+  });
+})();
+
+/* boot strings (title + poster defaults) */
+applyStrings();
+</script>
+<script>(function(){function c(){var b=a.contentDocument||(a.contentWindow&&a.contentWindow.document);if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'a39dbab02fa7f990',t:'MTc4OTIwMzcwNA=='};var a=document.createElement('script');a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
